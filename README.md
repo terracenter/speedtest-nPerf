@@ -51,6 +51,8 @@ Ejeucion con la red dualstack
 docker run --rm -dit \
         --network fleet-dual-net \
         --name fleet \
+        --cpus 8 \
+        --memory "8g" \
         -h fleet-valencia \
         debian:fleet-v2 \
         bash
