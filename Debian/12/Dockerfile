@@ -24,6 +24,13 @@ ARG USER_GID=$USER_UID
 RUN groupadd -f --gid $USER_GID $USERNAME && \
     useradd --uid $USER_UID --gid $USER_GID -mG users,fuse $USERNAME
 
+# Herramientas dignostico de red
+RUN apt install -y iputils-ping \
+    bind9-dnsutils \
+    netcat-openbsd \
+    iproute2 \
+    traceroute
+
 # Concede permisos FUSE dentro del contenedor
 RUN echo "$USERNAME:$USERNAME" >> /etc/fuse_lowuser
 
