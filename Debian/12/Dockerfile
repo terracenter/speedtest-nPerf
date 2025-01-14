@@ -31,6 +31,8 @@ RUN apt install -y iputils-ping \
     iproute2 \
     traceroute
 
+# Herramientas adicionales
+RUN apt install -y tmux htop ccze
 
 # Instalacion de speedtest cli para hacer pruebas (temporal)
 RUN  apt install -y curl && \
