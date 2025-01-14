@@ -37,7 +37,7 @@ Pero mejor dualStack
 docker network create -d macvlan \
     --subnet=190.103.31.188/30 \
     --gateway=190.103.31.189 \
-    --subnet=2803:C000:13E:1::284/126 --gateway=2803:C000:13E:1::285 \
+    --ipv6 --subnet=2803:C000:13E:1::284/126 --gateway=2803:C000:13E:1::285 \
      -o parent=ens3f0 \
      -o macvlan_mode=bridge fleet-dual-net
 ```
