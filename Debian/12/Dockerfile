@@ -31,6 +31,12 @@ RUN apt install -y iputils-ping \
     iproute2 \
     traceroute
 
+
+# Instalacion de speedtest cli para hacer pruebas (temporal)
+RUN  apt install -y curl && \
+      curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash && \
+      apt install -y speedtest
+
 # Concede permisos FUSE dentro del contenedor
 RUN echo "$USERNAME:$USERNAME" >> /etc/fuse_lowuser
 
