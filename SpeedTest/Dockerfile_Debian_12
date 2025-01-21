@@ -1,0 +1,62 @@
+FROM debian:bookworm
+
+# Crear el archivo debian.sources con los repositorios necesarios
+RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+
+# DNS
+COPY my_resolv.conf /etc/resolv.conf
+
+# Actualizar la lista de paquetes e instalar dependencias
+RUN apt update && apt upgrade -y 
+
+# Herramientas
+RUN apt install -y  iputils-ping bind9-dnsutils netcat-openbsd iproute2 traceroute tmux htop ccze inetutils-tools procps wget 
+
+   
+# Instalacion de speedtest cli para hacer pruebas (temporal)
+RUN apt install  -y curl  && \
+    curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash &&\
+    apt install -y speedtest
+
+# Matenimiento del contenedor
+RUN \
+    rm -rf /var/lib/apt/lists/* && \
+    apt clean
+
+ARG USERNAME=ooklauser
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd -f --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -mG users $USERNAME
+
+# Concede permisos FUSE dentro del contenedor
+#RUN echo "$USERNAME:$USERNAME" >> /etc/fuse_lowuser
+
+USER $USERNAME
+WORKDIR /home/$USERNAME
+
+
+# Descarga y ejecuta la instalación con -f (¡SOLUCIÓN FINAL Y CORRECTA!)
+RUN wget -O ooklaserver.sh https://install.speedtest.net/ooklaserver/ooklaserver.sh && \
+    chmod +x ooklaserver.sh && \
+    ./ooklaserver.sh -f install
+
+RUN echo "Proceso de configuración" && \
+echo "OoklaServer.useIPv6 = true " >>  OoklaServer.properties && \
+echo "OoklaServer.allowedDomains = *.ookla.com, *.speedtest.net" >>  OoklaServer.properties && \
+echo "OoklaServer.enableAutoUpdate = true" >>  OoklaServer.properties &&\
+echo "OoklaServer.ssl.useLetsEncrypt = true" >>  OoklaServer.properties
+
+RUN echo "#!/bin/bash " | tee ejecuta.sh && \
+    echo "./OoklaServer --daemon " | tee -a ejecuta.sh && \
+    echo "Ejecutando el servicio" | tee -a ejecuta.sh
+
+RUN chmod +x ejecuta.sh
+
+# Comando por defecto para ejecutar el servidor en segundo plano
+CMD ["./ejecuta.sh"]
+#RUN ./ooklaserver.sh -f start && ss -lnt
+#RUN ./OoklaServer --daemon && ss -lnt
+#RUN ./ejecuta.sh 
+RUN echo "Ejecutando el servicios"
