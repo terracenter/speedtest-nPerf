@@ -1,0 +1,41 @@
+FROM ubuntu:jammy
+
+# # Crear el archivo debian.sources con los repositorios necesarios
+#RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+# Crear el archivo debian.sources con los repositorios necesarios
+#RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+
+# DNS
+COPY my_resolv.conf /etc/resolv.conf
+
+# # Actualizar la lista de paquetes
+RUN apt  update && apt upgrade -y 
+
+# Herramientas dignostico de red
+RUN apt install -y iputils-ping \
+    bind9-dnsutils \
+    netcat-openbsd \
+    iproute2 \
+    traceroute \
+    iperf3
+
+# Herramientas adicionales
+RUN apt install -y tmux htop ccze wget neovim
+
+RUN apt-get -y install lsb-release gnupg &&\
+wget -qO- https://repo.nperf.com/apt/conf/nperf-server.gpg.key | gpg --dearmor > /usr/share/keyrings/nperf-archive-keyring.gpg &&\
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/nperf-archive-keyring.gpg] https://repo.nperf.com/apt $(lsb_release -sc) main non-free" >> /etc/apt/sources.list.d/nperf.list &&\
+apt-get update &&\
+apt-get -y install nperf-server
+
+# Instala systemd y nftables
+RUN apt install -y systemd nftables
+
+# Habilita nftables y nperf-server creando enlaces simbólicos
+ RUN ln -s /lib/systemd/system/nftables.service /etc/systemd/system/multi-user.target.wants/nftables.service && \
+     ln -s /lib/systemd/system/nperf-server.service /etc/systemd/system/multi-user.target.wants/nperf-server.service
+    
+# Prueba con sudo     
+
+# Inicia nftables y nperf-server, y mantén el contenedor en ejecución
+#CMD ["sh", "-c", "nftables start && /etc/init.d/nperf-server start && tail -f /dev/null"]

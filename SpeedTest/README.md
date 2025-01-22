@@ -57,8 +57,13 @@ ejecucion test:
 docker run --rm -dit \
         --network speedtest \
         --name speedtest \
-        --cpus 8 \
+        --cpus="4"  \
         --memory "8g" \
         -h speedtest-valencia \
-        nginx \
+        debian:speedtest \
         bash
+
+Ejecuion via bash
+./OoklaServer --daemon 
+
+./ooklaserver.sh -f start

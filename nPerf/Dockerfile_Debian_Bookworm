@@ -1,0 +1,62 @@
+FROM debian:bookworm
+
+# # Crear el archivo debian.sources con los repositorios necesarios
+RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+
+
+
+# DNS
+COPY my_resolv.conf /etc/resolv.conf
+
+# # Actualizar la lista de paquetes
+RUN apt update && apt upgrade -y 
+
+#RUN rm -rf /etc/resolv.conf 
+#RUN echo "nameserver 1.1.1.1" > /etc/resolv.conf
+
+# Herramientas dignostico de red
+RUN apt install -y iputils-ping \
+    bind9-dnsutils \
+    netcat-openbsd \
+    iproute2 \
+    traceroute \
+    procps \
+    iperf3
+
+# Instalacion de nPerf Debian Bookworm
+RUN apt install -y lsb-release gnupg wget
+RUN wget -qO- https://repo.nperf.com/apt/conf/nperf-server.gpg.key | gpg --dearmor > /etc/apt/trusted.gpg.d/nperf.gpg
+RUN echo "deb [arch=amd64] http://repo.nperf.com/apt $(lsb_release -sc) main non-free" >> /etc/apt/sources.list.d/nperf.list
+RUN apt update && apt upgrade -y
+RUN apt install -y nperf-server
+
+RUN sed -i 's/^#BIND_IP="::"/BIND_IP="::"/' /etc/nperf/nperf-server.conf
+
+# Herramientas adicionales
+RUN apt install -y tmux htop ccze wget neovim
+
+# Paquetes para fuse
+RUN apt install -y squashfuse fuse3
+RUN groupadd fuse
+
+ARG USERNAME=nperf
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd -f --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -mG users,fuse $USERNAME
+
+
+
+# Instala systemd y iptables
+RUN apt install -y systemd iptables
+
+# Habilita nftables y nperf-server creando enlaces simbólicos
+RUN ln -s /lib/systemd/system/nftables.service /etc/systemd/system/multi-user.target.wants/nftables.service && \
+     ln -s /lib/systemd/system/nperf-server.service /etc/systemd/system/multi-user.target.wants/nperf-server.service
+    
+
+# Ejecucion en BASH
+# nPerfServer  --basedir /etc/nperf/nperf-server.conf  --uuidfile /var/lib/nperf-server/nPerfServer.uuid -p 80 -t 443 -i ::
+
+

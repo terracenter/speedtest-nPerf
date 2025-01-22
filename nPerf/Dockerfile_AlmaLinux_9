@@ -1,0 +1,25 @@
+FROM almalinux:9
+
+# DNS
+COPY my_resolv.conf /etc/resolv.conf
+
+# Instala herramientas de diagnóstico de red
+RUN dnf install -y \
+    iputils \
+    bind-utils \
+    nmap-ncat \
+    iproute \
+    traceroute \
+    iperf3 
+
+    # tmux ccze htop
+
+    # Instala nftables y nperf-server
+    RUN yum -y install yum-utils wget && \ 
+        rpm --import https://repo.nperf.com/conf/nperf-server.gpg.sha256.key && \
+        wget https://repo.nperf.com/rhel/nperf-server.repo -O /tmp/nperf-server.repo && \
+        yum-config-manager --add-repo /tmp/nperf-server.repo && \
+        dnf update -y
+
+    RUN yum -y install nperf-server
+    RUN systemctl enable nperf-server

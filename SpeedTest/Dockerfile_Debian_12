@@ -59,4 +59,3 @@ CMD ["./ejecuta.sh"]
 #RUN ./ooklaserver.sh -f start && ss -lnt
 #RUN ./OoklaServer --daemon && ss -lnt
 #RUN ./ejecuta.sh 
-RUN echo "Ejecutando el servicios"
