@@ -21,7 +21,8 @@ RUN apt install -y iputils-ping \
     iproute2 \
     traceroute \
     procps \
-    iperf3
+    iperf3 \
+    net-tools
 
 # Instalacion de nPerf Debian Bookworm
 RUN apt install -y lsb-release gnupg wget
@@ -50,16 +51,25 @@ useradd --uid $USER_UID --gid $USER_GID -mG users,fuse $USERNAME
 # Concede permisos FUSE dentro del contenedor
 RUN echo "$USERNAME:$USERNAME" >> /etc/fuse_lowuser
 
-
 # Instala systemd y iptables
-RUN apt install -y systemd iptables
+RUN apt install -y  iptables 
+#systemd
 
 # Habilita nftables y nperf-server creando enlaces simbólicos
-RUN ln -s /lib/systemd/system/nftables.service /etc/systemd/system/multi-user.target.wants/nftables.service && \
-     ln -s /lib/systemd/system/nperf-server.service /etc/systemd/system/multi-user.target.wants/nperf-server.service
-    
-
-# Ejecucion en BASH
-# nPerfServer  --basedir /etc/nperf/nperf-server.conf  --uuidfile /var/lib/nperf-server/nPerfServer.uuid -p 80 -t 443 -i ::
+#RUN ln -s /lib/systemd/system/nftables.service /etc/systemd/system/multi-user.target.wants/nftables.service && \
+#     ln -s /lib/systemd/system/nperf-server.service /etc/systemd/system/multi-user.target.wants/nperf-server.service
 
 
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+#USER nperf
+WORKDIR /home/nperf
+
+# Ejecucion en BASH Manual y funciuona
+# /usr/bin/nPerfServer --uuidfile /var/lib/nperf-server/nPerfServer.uuid --basedir /etc/nperf/nperf-server.conf --pidfile /var/lib/nperf-server/nPerfServer.pid -p 80 -t 443 -i :: -x
+
+
+# ... otras instrucciones ...
+
+CMD ["/usr/local/bin/start.sh"]
