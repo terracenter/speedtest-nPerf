@@ -1,6 +1,6 @@
 #!/bin/bash
 # Inicia el servicio nperf-server
-/etc/init.d/nperf-server start
+/usr/bin/nPerfServer --uuidfile /var/lib/nperf-server/nPerfServer.uuid --basedir /etc/nperf/nperf-server.conf --pidfile /var/lib/nperf-server/nPerfServer.pid -p 80 -t 443 -i :: -x
 
 # Verifica si el servicio está en ejecución
 if ! pgrep -f "nperf-server" > /dev/null; then
