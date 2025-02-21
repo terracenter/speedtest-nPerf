@@ -1,0 +1,10 @@
+services:
+  nperf: 
+    container_name: nperf
+    image: debian:nperf
+    build: 
+      context: .
+      dockerfile: Dockerfile_Debian_Bookworm
+    cpus: 8
+    mem_limit: 8gb
+    restart: always

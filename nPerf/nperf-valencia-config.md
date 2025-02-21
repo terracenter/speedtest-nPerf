@@ -32,6 +32,15 @@ docker run --rm -dit \
         --cpus="8" \
         --memory "8g" \
         -h nperf-valencia \
-        ubuntu:nperf \
+        debian:nperf \
         bash
 
+
+
+docker run --rm -dit \
+        --network nperf \
+        --name nperf \
+        --cpus="8" \
+        --memory "8g" \
+        -h nperf-valencia \
+        debian:nperf \

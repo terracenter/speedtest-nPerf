@@ -54,5 +54,5 @@ docker run --rm -dit \
         --cpus 8 \
         --memory "8g" \
         -h fleet-valencia \
-        debian:fleet-v2 \
+        debian:fleet \
         bash

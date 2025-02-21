@@ -39,13 +39,16 @@ RUN apt install -y tmux htop ccze wget neovim
 RUN apt install -y squashfuse fuse3
 RUN groupadd fuse
 
+
 ARG USERNAME=nperf
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 RUN groupadd -f --gid $USER_GID $USERNAME && \
-    useradd --uid $USER_UID --gid $USER_GID -mG users,fuse $USERNAME
+useradd --uid $USER_UID --gid $USER_GID -mG users,fuse $USERNAME
 
+# Concede permisos FUSE dentro del contenedor
+RUN echo "$USERNAME:$USERNAME" >> /etc/fuse_lowuser
 
 
 # Instala systemd y iptables
