@@ -8,3 +8,4 @@ services:
     cpus: 8
     mem_limit: 8gb
     restart: always
+  
