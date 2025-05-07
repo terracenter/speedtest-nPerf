@@ -10,8 +10,17 @@ COPY my_resolv.conf /etc/resolv.conf
 RUN apt update && apt upgrade -y 
 
 # Herramientas
-RUN apt install -y  iputils-ping bind9-dnsutils netcat-openbsd iproute2 traceroute tmux htop ccze inetutils-tools procps wget 
-
+RUN apt install -y  iputils-ping \
+    bind9-dnsutils \
+    netcat-openbsd \
+    iproute2 \
+    traceroute \
+    tmux \
+    htop \
+    ccze \
+    inetutils-tools \
+    procps \
+    wget 
    
 # Instalacion de speedtest cli para hacer pruebas (temporal)
 RUN apt install  -y curl  && \
@@ -36,7 +45,6 @@ RUN groupadd -f --gid $USER_GID $USERNAME && \
 USER $USERNAME
 WORKDIR /home/$USERNAME
 
-
 # Descarga y ejecuta la instalación con -f (¡SOLUCIÓN FINAL Y CORRECTA!)
 RUN wget -O ooklaserver.sh https://install.speedtest.net/ooklaserver/ooklaserver.sh && \
     chmod +x ooklaserver.sh && \
@@ -48,14 +56,12 @@ echo "OoklaServer.allowedDomains = *.ookla.com, *.speedtest.net" >>  OoklaServer
 echo "OoklaServer.enableAutoUpdate = true" >>  OoklaServer.properties &&\
 echo "OoklaServer.ssl.useLetsEncrypt = true" >>  OoklaServer.properties
 
-RUN echo "#!/bin/bash " | tee ejecuta.sh && \
-    echo "./OoklaServer --daemon " | tee -a ejecuta.sh && \
-    echo "Ejecutando el servicio" | tee -a ejecuta.sh
+RUN echo "#!/bin/bash " | tee start.sh && \
+    echo "./OoklaServer --daemon " | tee -a start.sh && \
+    echo "echo 'Iniciando el servicio ´" | tee -a start.sh \
+    echo "tail -f /dev/null" | tee -a start.sh
 
-RUN chmod +x ejecuta.sh
+RUN chmod +x /home/ooklauser/start.sh
 
 # Comando por defecto para ejecutar el servidor en segundo plano
-CMD ["./ejecuta.sh"]
-#RUN ./ooklaserver.sh -f start && ss -lnt
-#RUN ./OoklaServer --daemon && ss -lnt
-#RUN ./ejecuta.sh 
+CMD ["/home/ooklauser/start.sh"]

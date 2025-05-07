@@ -1,7 +1,7 @@
 services:
   nperf: 
-    container_name: nperf
-    image: debian:nperf
+    container_name: speedtest
+    image: debian:speedtest
     build: 
       context: .
       dockerfile: Dockerfile_Debian_Bookworm

@@ -45,4 +45,7 @@ PID="/var/lib/nperf-server/nPerfServer.pid"
 UUID="/var/lib/nperf-server/nPerfServer.uuid"
 
 
-/usr/bin/nPerfServer --basedir="/etc/nperf/nperf-server.conf" --uuidfile="/var/lib/nperferver/nPerfServer.uuid" -p 80 -t 443 -i :: -x
+
+
+
+/usr/bin/nPerfServer --uuidfile /var/lib/nperf-server/nPerfServer.uuid --basedir /etc/nperf/nperf-server.conf --pidfile /var/lib/nperf-server/nPerfServer.pid -p 80 -t 443 -i :: -x

@@ -37,23 +37,8 @@ docker network create -d macvlan \
 ```
 
 
-Ejeucion con la red dualstack
+Dokcer run
 ---
-
-docker run --rm -dit \
-        --network speedtest \
-        --name speedtest \
-        --cpus 8 \
-        --memory "8g" \
-        -h speedtest-valencia \
-        speedtest-ubuntu \
-        bash
-
-
-ejecucion test:
----
-
-
 docker run --rm -dit \
         --network speedtest \
         --name speedtest \
