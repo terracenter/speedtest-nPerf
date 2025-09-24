@@ -1,0 +1,45 @@
+services:
+  ooklaserver:
+    image: ookla/ooklaserver:latest
+    container_name: ooklaserver
+    restart: unless-stopped
+    volumes:
+      - ${PWD}:/opt/ooklaserver/data
+      - ${PWD}:/opt/ooklaserver/certs
+    environment:
+      # All environment variables are optional
+      # OoklaServer user and group
+      OOKLASERVER_USER: ooklaserver
+      OOKLASERVER_GROUP: ooklaserver
+
+      oom_kill_disable: true
+
+      mem_limit: 2g
+      memswap_limit: 2g
+      mem_reservation: 2g
+
+      # Properties file configuration
+      # Default is Ookla provided default
+      PROPERTIES_FILE: OoklaServer.properties
+    
+
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080 || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 2
+
+    networks:
+      speedtest:
+        ipv4_address: 190.103.31.10
+        ipv6_address: 2803:c000:13e:1::12
+
+
+volumes:
+  ooklaserver_config:
+  ooklaserver_certs:
+
+
+networks:
+  speedtest:
+    external: true
