@@ -1,6 +1,7 @@
 # Ookla's own ooklaserver package:
 FROM ookla/ooklaserver:latest
 
+USER root
 # update available package lists
 RUN apk update
 
