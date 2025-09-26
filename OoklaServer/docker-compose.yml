@@ -1,44 +1,42 @@
 services:
-  ooklaserver:
-    image: ookla/ooklaserver:latest
-    container_name: ooklaserver
-    restart: unless-stopped
-    volumes:
-      - ${PWD}:/opt/ooklaserver/data
-      - ${PWD}:/opt/ooklaserver/certs
-    environment:
-      # All environment variables are optional
-      # OoklaServer user and group
-      OOKLASERVER_USER: ooklaserver
-      OOKLASERVER_GROUP: ooklaserver
-
-      oom_kill_disable: true
-
-      mem_limit: 2g
-      memswap_limit: 2g
-      mem_reservation: 2g
-
-      # Properties file configuration
-      # Default is Ookla provided default
-      PROPERTIES_FILE: OoklaServer.properties
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ooklaserver-server
     
+    # Nota: Tu kernel no soporta OomKillDisable, pero la dejamos para otros kernels.
+    oom_kill_disable: true
+    
+     # ✅ Prioridad Alta para Rendimiento (Felixbilidad)
+    cpu_shares: 8192 
 
+    # ⚠️ RECOMENDACIÓN: Aumenta a 12g (o más) para 100Gbps
+    mem_limit: 12g 
+    memswap_limit: 12g
+    mem_reservation: 12g
+    
+    # ✅ CORREGIDO: El directorio local (.) se monta en /opt
+    volumes:
+      - .:/opt
+      
+    stop_grace_period: 3s
+    restart: "unless-stopped"
+    
+    # ✅ CORREGIDO: Quitado el '=' y apuntado a la ruta correcta /opt/OoklaServer
+    entrypoint:
+      - "/opt/OoklaServer"
+      - "-d"
+      
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8080 || exit 1
       interval: 5s
       timeout: 5s
       retries: 2
-
+      
+    # ✅ CORREGIDO: Indentación de la red y quitada la asignación de IP
     networks:
-      speedtest:
-        ipv4_address: 190.103.31.10
-        ipv6_address: 2803:c000:13e:1::12
-
-
-volumes:
-  ooklaserver_config:
-  ooklaserver_certs:
-
+      - speedtest # Simplemente asigna el servicio a la red externa
 
 networks:
   speedtest:
