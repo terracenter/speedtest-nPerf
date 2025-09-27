@@ -8,3 +8,5 @@ RUN apk update
 # update CA certs for SSL, install wget for healthchecks
 #RUN apt-get install -y ca-certificates wget
 RUN apk add ca-certificates wget
+
+USER ooklaserver
