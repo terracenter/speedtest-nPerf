@@ -145,21 +145,26 @@ networks:
 
 ## Como hacer que funcione
 
-1. Crear eu usuario que ejecutara el contenedor
-
- sudo cp -rv * /home/ooklauser 
-
+- Clonar el repositorio y entrar al directrio 
+```bash
+cd /speedtest-nPerf/OoklaServer
+```
+- Crear eu usuario que ejecutara el contenedor
+```bash
 sudo useradd -mG docker  ooklauser
+```
+
+- Copiar todo a la raiz del usuario ooklauser
+```bash
+sudo cp -rv * /home/ooklauser 
+```
+
+- Cmbiar al usuario ooklauser
+```
 sudo su - ooklauser
+```
 
- sudo cp -rv * /home/ooklauser 
-
-
-- `-r` Cree una cuenta del sistema.
-
-
-
-/opt/ooklaserver
-
- # ✅ Prioridad Alta para Rendimiento
-    cpu_shares: 8192 
+- Ejecutar el contendor 
+```bash
+docker compose up -d
+```
